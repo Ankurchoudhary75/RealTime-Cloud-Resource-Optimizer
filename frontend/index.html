@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Resource Optimizer Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .card {
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        .decision {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Real-Time Cloud Resource Optimizer</h2>
+
+<div class="card">
+    <p>CPU Usage: <span id="cpu">--</span>%</p>
+    <p>Memory Usage: <span id="memory">--</span>%</p>
+    <p class="decision">Decision: <span id="decision">--</span></p>
+</div>
+
+<canvas id="cpuChart" width="400" height="200"></canvas>
+
+<script>
+const cpuSpan = document.getElementById("cpu");
+const memorySpan = document.getElementById("memory");
+const decisionSpan = document.getElementById("decision");
+
+const ctx = document.getElementById("cpuChart").getContext("2d");
+
+const cpuData = {
+    labels: [],
+    datasets: [{
+        label: "CPU Usage %",
+        data: [],
+        borderWidth: 2
+    }]
+};
+
+const cpuChart = new Chart(ctx, {
+    type: "line",
+    data: cpuData,
+    options: {
+        scales: {
+            y: {
+                min: 0,
+                max: 100
+            }
+        }
+    }
+});
+
+async function fetchMetrics() {
+    const response = await fetch("http://localhost:8000/metrics");
+    const data = await response.json();
+
+    cpuSpan.innerText = data.cpu_usage_percent.toFixed(1);
+    memorySpan.innerText = data.memory_usage_percent.toFixed(1);
+    decisionSpan.innerText = data.scaling_decision;
+
+    const time = new Date().toLocaleTimeString();
+    cpuData.labels.push(time);
+    cpuData.datasets[0].data.push(data.cpu_usage_percent);
+
+    if (cpuData.labels.length > 10) {
+        cpuData.labels.shift();
+        cpuData.datasets[0].data.shift();
+    }
+
+    cpuChart.update();
+}
+
+setInterval(fetchMetrics, 3000);
+</script>
+
+</body>
+</html>
