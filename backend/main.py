@@ -6,6 +6,8 @@ import time
 
 from optimizer import decide_scaling
 from scaler import apply_scaling
+from docker_scaler import scale_real
+from config import MODE
 
 app = FastAPI(title="Real-Time Cloud Resource Optimizer")
 
@@ -25,9 +27,14 @@ def auto_optimize():
         memory = psutil.virtual_memory().percent
 
         decision = decide_scaling(cpu)
-        replicas = apply_scaling(decision)
+
+        if MODE == "SIMULATION":
+            replicas = apply_scaling(decision)
+        else:
+            replicas = scale_real(decision)
 
         latest_state.update({
+            "mode": MODE,
             "cpu_usage_percent": cpu,
             "memory_usage_percent": memory,
             "scaling_decision": decision,
@@ -47,7 +54,7 @@ def stop_optimizer():
 
 @app.get("/")
 def root():
-    return {"status": "Optimizer running"}
+    return {"status": "Optimizer running", "mode": MODE}
 
 @app.get("/metrics")
 def metrics():

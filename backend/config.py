@@ -1,6 +1,7 @@
 # config.py
 
-MODE = "REAL"
+MODE = "SIMULATION"
+
    # change to "REAL" when ready
 
 MIN_REPLICAS = 1
