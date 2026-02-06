@@ -1,27 +1,40 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import psutil
 import threading
 import time
+
 from optimizer import decide_scaling
+from scaler import apply_scaling
 
 app = FastAPI(title="Real-Time Cloud Resource Optimizer")
 
-latest_decision = {}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+latest_state = {}
 stop_event = threading.Event()
 
 def auto_optimize():
     while not stop_event.is_set():
         cpu = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory().percent
-        decision = decide_scaling(cpu)
 
-        latest_decision.update({
+        decision = decide_scaling(cpu)
+        replicas = apply_scaling(decision)
+
+        latest_state.update({
             "cpu_usage_percent": cpu,
             "memory_usage_percent": memory,
-            "scaling_decision": decision
+            "scaling_decision": decision,
+            "active_replicas": replicas
         })
 
-        print("Auto Optimization:", latest_decision)
+        print("Optimizer State:", latest_state)
         time.sleep(5)
 
 @app.on_event("startup")
@@ -34,8 +47,8 @@ def stop_optimizer():
 
 @app.get("/")
 def root():
-    return {"status": "Backend is running"}
+    return {"status": "Optimizer running"}
 
 @app.get("/metrics")
-def get_metrics():
-    return latest_decision
+def metrics():
+    return latest_state
