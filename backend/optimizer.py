@@ -1,10 +1,7 @@
 def decide_scaling(cpu_usage: float) -> str:
-    """
-    Decide scaling action based on CPU usage
-    """
-    if cpu_usage > 70:
+    if cpu_usage > 10:      # lowered for testing
         return "SCALE_UP"
-    elif cpu_usage < 30:
+    elif cpu_usage < 5:
         return "SCALE_DOWN"
     else:
         return "STABLE"
