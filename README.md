@@ -73,7 +73,7 @@ Worker Containers
 ```bash
 docker compose up --build
 
-# How to Access:
+###How to Access:
 
 
 API: http://localhost:8000
@@ -82,16 +82,16 @@ Docs: http://localhost:8000/docs
 
 Metrics: http://localhost:8000/metrics
 
-#How to Stop:
+###How to Stop:
 docker compose down
 
-🧪 Simulation vs Real Mode
+###🧪 Simulation vs Real Mode
 
 The project supports two modes via configuration:
 MODE = "SIMULATION"  # Safe mode
 MODE = "REAL"        # Real Docker scaling
 
-📈 Results
+###📈 Results
 
 Successfully demonstrated real-time auto-scaling
 
@@ -99,7 +99,7 @@ Docker containers were dynamically created and removed based on CPU load
 
 Clean startup and teardown using Docker Compose
 
-🔮 Future Enhancements
+###🔮 Future Enhancements
 
 Kubernetes (HPA) integration
 
@@ -109,9 +109,8 @@ Cloud provider support (AWS/GCP)
 
 Web-based monitoring dashboard
 
-dashboard
 
-👨‍💻 Author
+###👨‍💻 Author
 
 Ankur Choudhary
 GitHub: https://github.com/Ankurchoudhary75
