@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   optimizer:
     build:
@@ -11,3 +9,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+    
