@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  optimizer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: optimizer_service
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
